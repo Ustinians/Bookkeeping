@@ -58,9 +58,19 @@ module.exports = appInfo => {
     secret: '267020',
   };
 
+  /**
+   * egg 提供两种文件接收模式，1 是 file 直接读取，2 是 stream 流的方式。我们采用比较熟悉的 file 形式
+   * 所以需要前往 config/config.default.js 配置好接收形式
+   */
+  // 设置mode的属性
+  config.multipart = {
+    mode: 'file',
+  };
+
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
+    uploadDir: '/app/public/upload', // 声明文件的默认存储路径
   };
 
   return {

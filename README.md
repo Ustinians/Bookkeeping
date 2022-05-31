@@ -48,7 +48,28 @@ Bookkeeping数据库设计
 
 在本项目中,将使用`tooken`令牌模式,出于多端考虑，`token` 可以运用在如网页、客户端、小程序、浏览器插件等等领域。如果选用 `cookie` 的形式鉴权，在客户端和小程序就无法使用这套接口，因为它们没有域的概念，而 `cookie` 是需要存在某个域下
 
+#### 登录功能
 
+安装egg-jwt插件: `npm i egg-jwt`
+
+在 `config/plugin.js` 下添加插件：
+
+```js
+jwt: {
+  enable: true,
+  package: 'egg-jwt'
+}
+```
+
+前往 `config/config.default.js` 下添加自定义加密字符串：
+
+```js
+config.jwt = {
+  secret: 'xxxxxx',
+};
+```
+
+`secret` 加密字符串，将在后续用于结合用户信息生成一串 `token`。`secret` 是放在服务端代码中，普通用户是无法通过浏览器发现的，所以千万不能将其泄漏，否则有可能会被不怀好意的人加以利用
 
 
 
