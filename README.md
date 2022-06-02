@@ -69,7 +69,37 @@ config.jwt = {
 };
 ```
 
-`secret` 加密字符串，将在后续用于结合用户信息生成一串 `token`。`secret` 是放在服务端代码中，普通用户是无法通过浏览器发现的，所以千万不能将其泄漏，否则有可能会被不怀好意的人加以利用
+`secret` 加密字符串，将在后续用于结合用户信息生成一串 `token`。`secret` 是放在服务端代码中，普通用户是无法通过浏览器发现的(**不能泄露出去**)
+
+#### 图片上传功能
+
+在/app/controller文件夹中创建upload.js文件用于上传文件资源
+
+安装moment和mkdirp用于时间戳的转换和新建文件夹: `npm i moment mkdirp -S `
+
+安装egg-cors用于跨域: `npm i egg-cors`
+
+安装好之后前往/config/plugins.js下添加属性
+
+```js
+cors: {
+    enable: true,
+        package: 'egg-cors',
+},
+```
+
+在/config/config.default.js中配置
+
+```js
+// 配置跨域
+config.cors = {
+    origin: '*', // 允许所有跨域访问
+    credentials: true, // 允许Cookie跨域
+    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
+};
+```
+
+
 
 
 

@@ -139,9 +139,8 @@ class UserController extends Controller {
   // 修改用户信息的方法(修改头像or个性签名)
   async editUserInfo() {
     const { ctx, app } = this;
-    // 通过POST请求,再请求体中获取签名字符按singature
-    const { signature = '' } = ctx.request.body; // 从请求体中取出个性签名(如果没有传入的话默认是空串'')
-    console.log(signature);
+    // 通过POST请求,再请求体中获取签名字符 singature和头像信息 avatar
+    const { signature = '', avatar = '' } = ctx.request.body; // 从请求体中取出个性签名(如果没有传入的话默认是空串'')
     try {
       // let user_id;
       const token = ctx.request.header.authorization; // 获取token
@@ -156,6 +155,7 @@ class UserController extends Controller {
       const result = await ctx.service.user.editUserInfo({
         ...userInfo,
         signature,
+        avatar,
       });
       // 修改成功返回
       ctx.body = {
@@ -165,6 +165,7 @@ class UserController extends Controller {
           id: userInfo.id,
           username: userInfo.username,
           signature,
+          avatar,
         },
       };
     } catch (error) {

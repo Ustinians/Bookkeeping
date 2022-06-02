@@ -45,7 +45,7 @@ module.exports = appInfo => {
       // 密码
       password: '267020', // 初始化密码，没设置的可以不写
       // 数据库名
-      database: 'bookkeeping', // 我们新建的数据库名称
+      database: 'bookkeeping', // 新建的数据库名称
     },
     // 是否加载到 app 上，默认开启
     app: true,
@@ -67,10 +67,17 @@ module.exports = appInfo => {
     mode: 'file',
   };
 
+  // 配置跨域
+  config.cors = {
+    origin: '*', // 允许所有跨域访问
+    credentials: true, // 允许Cookie跨域
+    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
+  };
+
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
-    uploadDir: '/app/public/upload', // 声明文件的默认存储路径
+    uploadDir: 'app/public/upload', // 声明文件的默认存储路径
   };
 
   return {

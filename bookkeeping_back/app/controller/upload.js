@@ -33,21 +33,21 @@ class UploadController extends Controller {
       const dir = path.join(this.config.uploadDir, day);
       const date = Date.now(); // 毫秒数(用于拼接文件名)
       await mkdirp(dir); // 如果不存在该目录就创建一个
-      // 返回文件的保存路径
+      // 返回文件的保存路径(创建文件路径)
       uploadDir = path.join(dir, date + path.extname(file.filename));
-      // 写入文件夹
+      // 将图片文件写入对应的路径
       fs.writeFileSync(uploadDir, f);
     } finally {
       // 清除临时文件
       ctx.cleanupRequestFiles();
     }
-    // 如果图片上传成功
-    ctx.body = {
+    ctx.body = { // 如果图片上传成功
       code: 200,
       msg: '上传文件成功',
-      data: uploadDir.repeat(/app/g, ''), // 需要将 app 去除，因为我们在前端访问路径的时候，是不需要 app 这个路径的
+      data: uploadDir.replace(/app/g, ''), // 需要将 app 去除，因为我们在前端访问路径的时候，是不需要 app 这个路径的
     };
   }
 }
 
 module.exports = UploadController;
+
