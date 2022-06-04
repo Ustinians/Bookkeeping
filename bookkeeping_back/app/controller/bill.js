@@ -181,7 +181,7 @@ class BillController extends Controller {
   // 更新账单数据
   async detail() {
     const { ctx, app } = this;
-    // 获取账单id信息
+    // 获取账单id信息(用于修改账单信息)
     const { id = '' } = ctx.queries;
     // 获取用户的user_id
     const token = ctx.request.header.authorization;
@@ -205,7 +205,151 @@ class BillController extends Controller {
       ctx.body = {
         code: 200,
         msg: '请求成功',
+        data: detail,
+      };
+    } catch (error) {
+      ctx.body = {
+        code: 500,
+        msg: '系统错误',
         data: null,
+      };
+    }
+  }
+  // 更新/编辑账单
+  async update() {
+    const { ctx, app } = this;
+    // 账单的相关参数(包括账单id)
+    const { id, amount, type_id, type_name, date, pay_type, remark = '' } = ctx.request.body;
+    // 判空处理
+    if (!amount || !type_id || !type_name || !date || !pay_type) {
+      ctx.body = {
+        code: 400,
+        msg: '参数错误',
+        data: null,
+      };
+      return;
+    }
+    try {
+      const token = ctx.request.header.authorization;
+      const decode = app.jwt.verify(token, app.config.jwt.secret);
+      if (!decode) return;
+      const user_id = decode.id; // 获取当前登录用户的id
+      // eslint-disable-next-line no-unused-vars
+      const result = await ctx.service.bill.update({
+        id, // 账单id
+        amount, // 金额
+        type_id, // 消费类型id
+        type_name, // 消费类型名称
+        date, // 日期
+        pay_type, // 消费类型
+        remark, // 备注
+        user_id, // 用户id
+      });
+      ctx.body = {
+        code: 200,
+        msg: '修改成功',
+        data: {
+          id, // 账单id
+          amount, // 金额
+          type_id, // 消费类型id
+          type_name, // 消费类型名称
+          date, // 日期
+          pay_type, // 消费类型
+          remark, // 备注
+          user_id, // 用户id
+        },
+      };
+    } catch (error) {
+      ctx.body = {
+        code: 500,
+        msg: '系统错误',
+        data: null,
+      };
+    }
+  }
+  // 删除指定账单
+  async delete() {
+    const { ctx, app } = this;
+    const { id } = ctx.request.body; // 获取请求体中的账单id
+    if (!id) {
+      ctx.body = {
+        code: 400,
+        msg: '参数错误',
+        data: null,
+      };
+      return;
+    }
+    try {
+      const token = ctx.request.header.authorization;
+      const decode = app.jwt.verify(token, app.config.jwt.secret);
+      const user_id = decode.id;
+      await ctx.service.bill.delete(id, user_id);
+      ctx.body = {
+        code: 200,
+        msg: '删除成功',
+        data: null,
+      };
+    } catch (error) {
+      ctx.body = {
+        code: 500,
+        msg: '系统错误',
+        data: null,
+      };
+    }
+  }
+  // 获取指定时间内收支等详细信息
+  async data() {
+    const { ctx, app } = this;
+    const { date = '' } = ctx.query;
+    // 获取用户的user_id
+    const token = ctx.request.header.authorization;
+    const decode = app.jwt.verify(token, app.config.jwt.secret);
+    const user_id = decode.id;
+    try {
+      const result = await ctx.service.bill.list(user_id);
+      // 根据时间参数,筛选出当月所有的账单信息
+      const start = moment(date).startOf('month').unix() * 1000; // 选择月份,月初时间
+      const end = moment(date).endOf('month').unix() * 1000; // 选择月份,月末时间
+      // 筛选出来的当月信息的基本数据
+      const _data = result.filter(item => (Number(item.date) > start && Number(item.date) < end));
+      // 总支出
+      const total_expense = _data.reduce((arr, cur) => {
+        if (cur.pay_type === 1) {
+          arr += Number(cur.amount);
+        }
+        return arr;
+      }, 0);
+      // 总收入
+      const total_income = _data.reduce((arr, cur) => {
+        if (cur.pay_type === 2) {
+          arr += Number(cur.amount);
+        }
+        return arr;
+      }, 0);
+      // 获取收支构成
+      const total_data = _data.reduce((arr, cur) => {
+        const index = arr.findIndex(item => item.type_id === cur.type_id);
+        if (index === -1) { // 如果没有的话添加该类型的收入/支出
+          arr.push({
+            type_id: cur.type_id,
+            type_name: cur.type_id,
+            pay_type: cur.pay_type,
+            number: Number(cur.amount),
+          });
+        }
+        if (index > -1) {
+          arr[index].number += Number(cur.amount);
+        }
+        return arr;
+      }, []);
+      ctx.body = {
+        code: 200,
+        msg: '请求成功',
+        data: {
+          total_expense: Number(total_expense).toFixed(2),
+          total_income: Number(total_income).toFixed(2),
+          total_data: total_data || [],
+        },
       };
     } catch (error) {
       ctx.body = {

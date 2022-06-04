@@ -19,4 +19,8 @@ module.exports = app => {
   router.post('/api/bill/add', _jwt, controller.bill.add); // 添加账单信息
   router.post('/api/type/add', controller.type.add); // 添加账单信息
   router.get('/api/bill/list', _jwt, controller.bill.list); // 获取账单列表
+  router.get('/api/bill/detail', _jwt, controller.bill.detail); // 获取账单信息
+  router.post('/api/bill/update', _jwt, controller.bill.update); // 更新账单信息
+  router.post('/api/bill/delete', _jwt, controller.bill.delete); // 根据id删除账单
+  router.get('/api/bill/data', _jwt, controller.bill.data); // 获取数据
 };
