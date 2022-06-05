@@ -71,4 +71,30 @@ yarn create @vitejs/app bookkeeping_front --template react
   yarn add postcss-pxtorem
   ```
 
+* 在项目根目录新建 `postcss.config.js`
+
+  ```js
+  /**
+   * postcss.config.js
+   * 用vite创建项目,配置postcss需要使用post.config.js
+   */
+  module.exports = {
+      "plugins": [
+          require('postcss-pxtorem')({
+              rootValue: 37.5,
+              postList: ['*'],
+              selectorBlackList: ['.norem'] // 过滤器norem开头的class,不进行rem转换
+          })
+      ]
+  }
+  ```
+
+## 注册和登录
+
+* 引入`react-captcha-code`为页面提供验证码
+
+  ```
+  yarn add react-captcha-code
+  ```
+
   

@@ -5,6 +5,8 @@
 import Home from "@/pages/Home";
 import Data from "@/pages/Data";
 import User from "@/pages/User";
+import Detail from "@/pages/Detail";
+import Login from "@/pages/Login";
 
 export default [
     {
@@ -18,5 +20,13 @@ export default [
     {
         path: '/user',
         element: <User />
-    }
+    },
+    {
+        path: '/detail',
+        element: <Detail />
+    },
+    {
+        path: '/login',
+        element: <Login />
+    },
 ]
