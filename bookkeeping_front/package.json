@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.27.2",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.3",
     "http-proxy-middleware": "^2.0.6",
     "less": "^4.1.2",
     "lib-flexible": "^0.3.2",
